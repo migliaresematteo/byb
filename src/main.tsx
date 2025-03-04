@@ -4,10 +4,16 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </StrictMode>
-);
+// Only render the React app if we're not on the admin page
+if (!window.location.pathname.startsWith('/admin')) {
+  const rootElement = document.getElementById('root');
+  if (rootElement) {
+    createRoot(rootElement).render(
+      <StrictMode>
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
+      </StrictMode>
+    );
+  }
+}
