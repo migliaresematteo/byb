@@ -7,14 +7,7 @@ export default defineConfig({
     react(),
   ],
   optimizeDeps: {
-    exclude: ['lucide-react'],
-    include: [
-      'decap-cms-app',
-      'immutable',
-      'slate',
-      'slate-react',
-      'slate-hyperscript'
-    ]
+    exclude: ['lucide-react']
   },
   // Add asset handling configuration
   assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.gif', '**/*.svg', '**/*.webp'],
@@ -33,7 +26,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-          cms: ['decap-cms-app', 'immutable', 'slate', 'slate-react', 'slate-hyperscript'],
           icons: ['lucide-react']
         }
       }

@@ -4,16 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BrickByBrick Content Manager</title>
+    <!-- Include Netlify Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- Include Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.1.3/dist/decap-cms.js"></script>
   </head>
   <body>
+    <!-- the main element that Decap CMS will be mounted into -->
     <div id="nc-root"></div>
-    <script type="module">
-      import CMS from 'decap-cms-app';
-      // Initialize the CMS
-      window.CMS = CMS;
-      CMS.init();
 
+    <script>
+      // Initialize CMS
       if (window.location.hostname === 'localhost') {
         window.CMS_CONFIG = {
           local_backend: true
