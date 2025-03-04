@@ -11,19 +11,31 @@
     <!-- the main element that Decap CMS will be mounted into -->
     <div id="nc-root"></div>
 
-    <!-- Load Decap CMS after the nc-root div -->
+    <!-- Load Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.1.3/dist/decap-cms.js"></script>
     <script>
-      // Wait for DOM content to be loaded
-      document.addEventListener('DOMContentLoaded', function() {
-        // Initialize CMS
+      // Wait for both CMS and Identity Widget to be ready
+      window.addEventListener('load', function() {
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.on('init', user => {
+            if (!user) {
+              window.netlifyIdentity.on('login', () => {
+                // Initialize CMS after successful login
+                CMS.init();
+              });
+            } else {
+              // User is already logged in, initialize CMS
+              CMS.init();
+            }
+          });
+        }
+
+        // Local development settings
         if (window.location.hostname === 'localhost') {
           window.CMS_CONFIG = {
             local_backend: true
           };
         }
-        // Initialize CMS after config is set
-        CMS.init();
       });
     </script>
   </body>
