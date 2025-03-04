@@ -1,0 +1,40 @@
+{
+  "id": "12",
+  "title": "Appartamenti di nuova costruzione - Torino, Giardini Reali, Viale 1 Maggio",
+  "price": null,
+  "city": "Torino",
+  "address": "Viale 1 Maggio, Giardini Reali",
+  "category": "Appartamento",
+  "totalRooms": null,
+  "bedrooms": null,
+  "bathrooms": null,
+  "sqft": 50,
+  "garage": 0,
+  "outdoorParking": 0,
+  "imageUrl": "/uploads/property-12-1.jpg",
+  "images": [
+    "/uploads/property-12-1.jpg",
+    "/uploads/property-12-2.jpg",
+    "/uploads/property-12-3.jpg",
+    "/uploads/property-12-4.jpg"
+  ],
+  "description": "Residenze Esclusive nel Cuore di Torino\n    \n    Nel centro storico di Torino sono disponibili residenze di prestigio, progettate per chi desidera un'abitazione moderna, elegante e funzionale. Queste soluzioni abitative uniscono architettura raffinata, comfort avanzato e materiali di alta qualità, in un contesto riservato e di grande valore.\n    \n    **Posizione Unica**\n    - Ubicazione strategica, a pochi passi dalle principali piazze e vie dello shopping.\n    - Zona tranquilla e riservata, ideale per chi cerca privacy senza rinunciare alla centralità.\n    - Servizi esclusivi, boutique e ristoranti nelle immediate vicinanze.\n    \n    **Tipologie Disponibili**\n    Le soluzioni abitative sono studiate per soddisfare ogni esigenza:\n    - Bilocali moderni, perfetti per professionisti e investitori.\n    - Trilocali e quadrilocali spaziosi, ideali per chi cerca il giusto equilibrio tra stile e funzionalità.\n    - Soluzioni di metratura superiore, pensate per chi desidera un ambiente esclusivo e personalizzabile.\n    \n    **Caratteristiche e Comfort**\n    - Contesto di lusso, con finiture ricercate e design elegante.\n    - Ampie vetrate e spazi luminosi, per un'esperienza abitativa raffinata.\n    - Tecnologie moderne e dotazioni esclusive, per il massimo comfort.\n    - Disponibilità di box auto privati, un valore aggiunto in centro città.\n    \n    NB: LE IMMAGINI SONO PURAMENTE A SCOPO DIMOSTRATIVO.\n    \n    Si richiede primo appuntamento di approfondimento o di persona o tramite videocall prima della visita agli immobili.\n    Per ulteriori informazioni, contattare in privato al numero 3403524759 o tramite Whatsapp.",
+  "context": "",
+  "features": [
+    "Infissi esterni in doppio vetro / legno",
+    "Parcheggio bici"
+  ],
+  "condition": "",
+  "floorLevel": "",
+  "lat": 45.07321558029888,
+  "lng": 7.689436031520279,
+  "lastUpdate": "2025-03-04",
+  "projectType": "Residenziale",
+  "contractType": "Vendita",
+  "totalUnits": 3,
+  "floors": 5,
+  "floor": "",
+  "parking": "Disponibilità di box auto privati, parcheggio bici",
+  "heating": "Centralizzato, a pavimento",
+  "airConditioning": "Centralizzato, freddo"
+}

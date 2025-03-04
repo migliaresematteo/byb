@@ -1,0 +1,2 @@
+This file was created by the fallback image optimization script.
+To enable full image optimization, please upgrade Node.js to v18.17.0 or later and run: npm install sharp

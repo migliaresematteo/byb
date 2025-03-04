@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://brickbybrickimmobiliare.it/sitemap.xml
+
+# Disallow duplicate content
+Disallow: */index.html
