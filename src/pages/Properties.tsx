@@ -3,13 +3,14 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map } from '../components/Map';
 import { FeaturedProperties } from '../components/FeaturedProperties';
-import { properties } from '../data/properties';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-react';
 import { Property } from '../types';
 import SEO from '../components/SEO';
+import { useProperties } from '../contexts/PropertyContext';
 
 export default function Proprietà() {
   const navigate = useNavigate();
+  const { properties, loading, error } = useProperties();
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [filtri, setFiltri] = useState({
     ricerca: '',
@@ -27,15 +28,15 @@ export default function Proprietà() {
   const proprietàFiltrate = useMemo(() => {
     return properties.filter(proprietà => {
       const corrispondeRicerca = proprietà.title.toLowerCase().includes(filtri.ricerca.toLowerCase()) ||
-                                proprietà.city.toLowerCase().includes(filtri.ricerca.toLowerCase()) ||
+                                (proprietà.city && proprietà.city.toLowerCase().includes(filtri.ricerca.toLowerCase())) ||
                                 proprietà.description.toLowerCase().includes(filtri.ricerca.toLowerCase());
       
       const corrispondePrezzoMin = !filtri.prezzoMin || (proprietà.price && Number(proprietà.price) !== 0 && Number(proprietà.price) >= Number(filtri.prezzoMin));
       const corrispondePrezzoMax = !filtri.prezzoMax || (proprietà.price && Number(proprietà.price) !== 0 && Number(proprietà.price) <= Number(filtri.prezzoMax));
-      const corrispondeStanze = !filtri.stanzeTotali || proprietà.totalRooms === Number(filtri.stanzeTotali);
+      const corrispondeStanze = !filtri.stanzeTotali || (proprietà.totalRooms && Number(proprietà.totalRooms) === Number(filtri.stanzeTotali));
       const corrispondeMetratura = !filtri.metratura || proprietà.sqft >= Number(filtri.metratura);
       const corrispondeCategoria = !filtri.categoria || proprietà.category.toLowerCase().includes(filtri.categoria.toLowerCase());
-      const corrispondeCittà = !filtri.città || proprietà.city.toLowerCase() === filtri.città.toLowerCase();
+      const corrispondeCittà = !filtri.città || (proprietà.city && proprietà.city.toLowerCase() === filtri.città.toLowerCase());
 
       return corrispondeRicerca && 
              corrispondePrezzoMin && 
@@ -51,9 +52,9 @@ export default function Proprietà() {
         case 'prezzo-desc':
           return (b.price && Number(b.price) !== 0 ? Number(b.price) : -Infinity) - (a.price && Number(a.price) !== 0 ? Number(a.price) : -Infinity);
         case 'stanze-asc':
-          return a.totalRooms - b.totalRooms;
+          return (a.totalRooms ? Number(a.totalRooms) : 0) - (b.totalRooms ? Number(b.totalRooms) : 0);
         case 'stanze-desc':
-          return b.totalRooms - a.totalRooms;
+          return (b.totalRooms ? Number(b.totalRooms) : 0) - (a.totalRooms ? Number(a.totalRooms) : 0);
         case 'metratura-asc':
           return a.sqft - b.sqft;
         case 'metratura-desc':
@@ -89,8 +90,8 @@ export default function Proprietà() {
         "image": property.imageUrl,
         "address": {
           "@type": "PostalAddress",
-          "addressLocality": property.city,
-          "streetAddress": property.address
+          "addressLocality": property.city || '',
+          "streetAddress": property.address || ''
         },
         "offers": {
           "@type": "Offer",
@@ -101,6 +102,34 @@ export default function Proprietà() {
       }
     }))
   };
+
+  if (loading) {
+    return (
+      <div className="pt-24 pb-12 bg-gray-50 flex justify-center items-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-lime-500 mx-auto mb-4" />
+          <p className="text-lg font-medium text-gray-700">Caricamento proprietà in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-24 pb-12 bg-gray-50 flex justify-center items-center min-h-[60vh]">
+        <div className="text-center max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Errore</h2>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-lime-500 text-white rounded hover:bg-lime-600"
+          >
+            Riprova
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-12 bg-gray-50">

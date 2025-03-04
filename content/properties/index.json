@@ -1,0 +1,100 @@
+[
+  {
+    "slug": "luxury-villa-torino",
+    "title": "Lussuosa Villa con Vista Panoramica",
+    "description": "Una magnifica villa di lusso con vista panoramica sulle colline torinesi, completa di piscina, giardino privato e finiture di pregio.",
+    "price": 1250000,
+    "location": "Torino, Piemonte",
+    "address": "Via delle Colline 123, Torino",
+    "type": "Villa",
+    "status": "For Sale",
+    "featured": true,
+    "featuredImage": "/images/properties/villa-torino-main.jpg",
+    "images": [
+      {"image": "/images/properties/villa-torino-living.jpg"},
+      {"image": "/images/properties/villa-torino-kitchen.jpg"},
+      {"image": "/images/properties/villa-torino-bedroom.jpg"},
+      {"image": "/images/properties/villa-torino-garden.jpg"}
+    ],
+    "bedrooms": 5,
+    "bathrooms": 4,
+    "squareMeters": 450,
+    "features": [
+      "Piscina privata",
+      "Giardino panoramico",
+      "Domotica avanzata",
+      "Riscaldamento a pavimento",
+      "Impianto fotovoltaico",
+      "Garage triplo"
+    ],
+    "coordinates": {
+      "lat": 45.0703,
+      "lng": 7.6869
+    }
+  },
+  {
+    "slug": "modern-apartment-centro",
+    "title": "Moderno Appartamento in Centro",
+    "description": "Elegante appartamento ristrutturato nel cuore di Torino, a pochi passi dalle principali attrazioni e servizi della città.",
+    "price": 380000,
+    "location": "Torino, Piemonte",
+    "address": "Via Roma 45, Torino",
+    "type": "Apartment",
+    "status": "For Sale",
+    "featured": true,
+    "featuredImage": "/images/properties/apartment-torino-main.jpg",
+    "images": [
+      {"image": "/images/properties/apartment-torino-living.jpg"},
+      {"image": "/images/properties/apartment-torino-kitchen.jpg"},
+      {"image": "/images/properties/apartment-torino-bedroom.jpg"},
+      {"image": "/images/properties/apartment-torino-bathroom.jpg"}
+    ],
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "squareMeters": 120,
+    "features": [
+      "Ristrutturato recentemente",
+      "Aria condizionata",
+      "Pavimenti in parquet",
+      "Doppi servizi",
+      "Ascensore",
+      "Balcone"
+    ],
+    "coordinates": {
+      "lat": 45.0703,
+      "lng": 7.6869
+    }
+  },
+  {
+    "slug": "office-space-lingotto",
+    "title": "Spazio Ufficio Moderno al Lingotto",
+    "description": "Ampio spazio ufficio in affitto nella zona del Lingotto, ideale per startup e aziende in crescita.",
+    "price": 1800,
+    "location": "Torino, Piemonte",
+    "address": "Via Nizza 294, Torino",
+    "type": "Office",
+    "status": "For Rent",
+    "featured": false,
+    "featuredImage": "/images/properties/office-lingotto-main.jpg",
+    "images": [
+      {"image": "/images/properties/office-lingotto-interior.jpg"},
+      {"image": "/images/properties/office-lingotto-meeting.jpg"},
+      {"image": "/images/properties/office-lingotto-reception.jpg"}
+    ],
+    "bedrooms": 0,
+    "bathrooms": 2,
+    "squareMeters": 180,
+    "features": [
+      "Open space",
+      "Sala riunioni",
+      "Fibra ottica",
+      "Parcheggio privato",
+      "Area break",
+      "Riscaldamento centralizzato"
+    ],
+    "coordinates": {
+      "lat": 45.0320,
+      "lng": 7.6650
+    }
+  }
+]

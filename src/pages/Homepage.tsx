@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
-import { Users, Award, Building, ArrowRight, Home, FileText, Handshake, Trees, Map, LucideCheckCircle, PenTool, Wrench, Phone, BadgeCheck, Network, DraftingCompass } from 'lucide-react';
+import { Users, Award, Building, ArrowRight, Home, FileText, Handshake, Trees, Map, LucideCheckCircle, PenTool, Wrench, Phone, BadgeCheck, Network, DraftingCompass, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { properties } from '../data/properties';
 import { TallyForm } from '../components/TallyForm';
-import { FeaturedProperties } from '../components/FeaturedProperties';
+import { CMSFeaturedProperties } from '../components/CMSFeaturedProperties';
 import SEO from '../components/SEO';
+import { useProperties } from '../contexts/PropertyContext';
 
 export default function Homepage() {
+  const { properties, loading, error } = useProperties();
+
   // SEO structured data
   const organizationStructuredData = {
     "@context": "https://schema.org",
@@ -25,6 +27,34 @@ export default function Homepage() {
     },
     "telephone": "+393403524759"
   };
+
+  if (loading) {
+    return (
+      <div className="pt-24 pb-12 bg-white flex justify-center items-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-lime-500 mx-auto mb-4" />
+          <p className="text-lg font-medium text-gray-700">Caricamento proprietà in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-24 pb-12 bg-white flex justify-center items-center min-h-[60vh]">
+        <div className="text-center max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Errore</h2>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-lime-500 text-white rounded hover:bg-lime-600"
+          >
+            Riprova
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-16">
@@ -89,7 +119,7 @@ export default function Homepage() {
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Valore Totale Portfolio</h3>
                 <p className="text-4xl font-bold text-lime-500">
-                  {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(properties.reduce((total, prop) => total + (prop.price || 0), 0) / 10)}
+                  {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(properties.reduce((total, prop) => total + (Number(prop.price) || 0), 0) / 10)}
                 </p>
               </div>
               <div className="text-center">
@@ -116,9 +146,9 @@ export default function Homepage() {
               <h2 className="text-3xl font-bold mb-6">Chi siamo?</h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Benvenuti su Brick by Brick, il vostro punto di riferimento per l'acquisto, la vendita e la locazione di immobili. Noi operiamo con passione e professionalità nel settore immobiliare, offrendo ai nostri clienti un servizio su misura, trasparente e affidabile.<br /><br />
-                Il nostro obiettivo è accompagnarvi in ogni fase della trattativa, garantendo un’esperienza sicura e soddisfacente. Che si tratti di trovare la casa dei vostri sogni, vendere il vostro immobile al miglior prezzo o affittare con serenità, il nostro team di esperti è sempre pronto a fornirvi assistenza personalizzata.<br /><br />
-                Grazie a una profonda conoscenza del mercato e a una rete consolidata di collaborazioni, riusciamo a proporvi soluzioni su misura, sia per privati che per investitori. La nostra filosofia si basa sull’ascolto attento delle vostre esigenze, sulla trasparenza e sull’impegno costante nel trovare le migliori opportunità per voi.<br /><br />
-                Se state cercando un’agenzia immobiliare che vi segua con competenza e dedizione, Brick by Brick è la scelta giusta.
+                Il nostro obiettivo è accompagnarvi in ogni fase della trattativa, garantendo un'esperienza sicura e soddisfacente. Che si tratti di trovare la casa dei vostri sogni, vendere il vostro immobile al miglior prezzo o affittare con serenità, il nostro team di esperti è sempre pronto a fornirvi assistenza personalizzata.<br /><br />
+                Grazie a una profonda conoscenza del mercato e a una rete consolidata di collaborazioni, riusciamo a proporvi soluzioni su misura, sia per privati che per investitori. La nostra filosofia si basa sull'ascolto attento delle vostre esigenze, sulla trasparenza e sull'impegno costante nel trovare le migliori opportunità per voi.<br /><br />
+                Se state cercando un'agenzia immobiliare che vi segua con competenza e dedizione, Brick by Brick è la scelta giusta.
               </p>
               <Link to="tel:+393403524759">
                 <motion.button
@@ -173,7 +203,7 @@ export default function Homepage() {
       </section>
 
       {/* Featured Properties Section */}
-      <FeaturedProperties properties={properties} />
+      <CMSFeaturedProperties />
 
       {/* Services Section */}
       <section className="py-20 bg-white">
@@ -195,14 +225,14 @@ export default function Homepage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[ 
               { icon: Home, title: 'Valutazione gratuita immobili residenziali', desc: 'Offriamo una valutazione professionale e gratuita del valore di mercato degli immobili residenziali, fornendo un\'analisi dettagliata e aggiornata.' },
-              { icon: Building, title: 'Valutazione gratuita immobili commerciali', desc: 'Determinazione precisa del valore degli immobili commerciali per garantire un’operazione di vendita o acquisto consapevole e vantaggiosa.' },
+              { icon: Building, title: 'Valutazione gratuita immobili commerciali', desc: 'Determinazione precisa del valore degli immobili commerciali per garantire un\'operazione di vendita o acquisto consapevole e vantaggiosa.' },
               { icon: Map, title: 'Valutazione gratuita terreni edificabili', desc: 'Analisi esperta del potenziale edificabile e del valore di mercato dei terreni destinati a nuove costruzioni.' },
-              { icon: Trees, title: 'Valutazione gratuita terreni agricoli', desc: 'Stima professionale del valore dei terreni agricoli basata su caratteristiche, ubicazione e destinazione d’uso.' },
+              { icon: Trees, title: 'Valutazione gratuita terreni agricoli', desc: 'Stima professionale del valore dei terreni agricoli basata su caratteristiche, ubicazione e destinazione d\'uso.' },
               { icon: FileText, title: 'Gestione pratiche', desc: 'Supporto completo nella gestione delle pratiche burocratiche e amministrative per compravendite immobiliari.' },
-              { icon: LucideCheckCircle, title: 'Controllo documentale', desc: 'Verifica approfondita di tutta la documentazione necessaria per garantire la conformità legale e amministrativa dell’immobile.' },
+              { icon: LucideCheckCircle, title: 'Controllo documentale', desc: 'Verifica approfondita di tutta la documentazione necessaria per garantire la conformità legale e amministrativa dell\'immobile.' },
               { icon: Handshake, title: 'Assistenza fino al rogito', desc: 'Accompagnamento in ogni fase della compravendita, fino alla firma del rogito notarile, garantendo un processo sicuro e trasparente.' },
               { icon: PenTool, title: 'Consulenze per cantieri residenziali e commerciali', desc: 'Analisi e strategie per la valorizzazione e vendita di cantieri residenziali e commerciali.' },
-              { icon: Wrench, title: 'Consulenza per ristrutturazione di immobili', desc: 'Suggerimenti strategici per interventi di ristrutturazione finalizzati all’ottimizzazione del valore di mercato degli immobili.' }
+              { icon: Wrench, title: 'Consulenza per ristrutturazione di immobili', desc: 'Suggerimenti strategici per interventi di ristrutturazione finalizzati all\'ottimizzazione del valore di mercato degli immobili.' }
             ].map((service, index) => (
               <motion.div
                 key={index}

@@ -32,6 +32,7 @@ collections:
       - {label: "Address", name: "address", widget: "string"}
       - {label: "Type", name: "type", widget: "select", options: ["Apartment", "House", "Villa", "Office"]}
       - {label: "Status", name: "status", widget: "select", options: ["For Sale", "For Rent"]}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Featured Image", name: "featuredImage", widget: "image"}
       - label: "Images"
         name: "images"

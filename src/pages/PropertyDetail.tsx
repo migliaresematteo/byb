@@ -1,9 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Bed, Bath, Square, MapPin, Car, Trees as Tree, Heart, ArrowRight, Check, Home, Info, Phone, MessageCircle, Calendar, Building2, Thermometer, Wind, Leaf } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Car, Trees as Tree, Heart, ArrowRight, Check, Home, Info, Phone, MessageCircle, Calendar, Building2, Thermometer, Wind, Leaf, Loader2 } from 'lucide-react';
 import { Property } from '../types';
 import { useParams } from 'react-router-dom';
-import { properties } from '../data/properties';
 import { Carousel } from '../components/Carousel';
 import { Map } from '../components/Map';
 import { PropertyCard } from '../components/PropertyCard';
@@ -11,6 +10,9 @@ import { FeaturedProperties } from '../components/FeaturedProperties';
 import { TallyForm } from '../components/TallyForm';
 import SEO from '../components/SEO';
 import { generatePropertyMetaDescription, generatePropertyStructuredData, generatePropertyKeywords } from '../utils/seoHelpers';
+import { useProperties } from '../contexts/PropertyContext';
+import { useEffect, useState } from 'react';
+import { fetchPropertyById } from '../services/propertyService';
 
 interface SchedaProprietàProps {
   property: Property;
@@ -18,9 +20,56 @@ interface SchedaProprietàProps {
 
 export default function SchedaProprietàDettaglio() {
   const { id } = useParams();
-  const property = properties.find(p => p.id === id);
+  const { properties, loading: loadingAllProperties } = useProperties();
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!property) {
+  useEffect(() => {
+    const loadProperty = async () => {
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // First try to find the property in the already loaded properties
+        const foundProperty = properties.find(p => p.id === id);
+        
+        if (foundProperty) {
+          setProperty(foundProperty);
+        } else {
+          // If not found in the context, fetch it individually
+          const fetchedProperty = await fetchPropertyById(id);
+          if (fetchedProperty) {
+            setProperty(fetchedProperty);
+          } else {
+            setError('Proprietà non trovata');
+          }
+        }
+      } catch (err) {
+        console.error('Error loading property:', err);
+        setError('Errore nel caricamento della proprietà');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProperty();
+  }, [id, properties]);
+
+  if (loading || loadingAllProperties) {
+    return (
+      <div className="pt-24 pb-12 flex justify-center items-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-lime-500 mx-auto mb-4" />
+          <p className="text-lg font-medium text-gray-700">Caricamento proprietà in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !property) {
     return (
       <div className="pt-16 text-center">
         <SEO 
@@ -30,7 +79,7 @@ export default function SchedaProprietàDettaglio() {
           ogTitle="Proprietà Non Trovata | BrickByBrick Immobiliare"
         />
         <h1 className="text-2xl font-bold text-gray-800">Proprietà Non Trovata | BrickByBrick Immobiliare</h1>
-        <p className="mt-4 text-gray-600">L'immobile che stai cercando non esiste o è stato rimosso.</p>
+        <p className="mt-4 text-gray-600">{error || "L'immobile che stai cercando non esiste o è stato rimosso."}</p>
         <Link to="/" className="mt-8 inline-block text-lime-500 hover:text-lime-600">
           Torna alla home
         </Link>
@@ -42,7 +91,8 @@ export default function SchedaProprietàDettaglio() {
     .filter(p => 
       p.id !== property.id && 
       p.category === property.category &&
-      Math.abs(p.price - property.price) <= property.price * 0.2
+      p.price && property.price &&
+      Math.abs(Number(p.price) - Number(property.price)) <= Number(property.price) * 0.2
     )
     .slice(0, 3);
 

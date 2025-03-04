@@ -36,4 +36,5 @@ export interface Property {
   parking: string;
   heating: string;
   airConditioning: string;
+  featured?: boolean;
 }
