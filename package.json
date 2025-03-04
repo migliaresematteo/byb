@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && npm run copy-content",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "optimize-images": "node scripts/optimize-images.js",
-    "prebuild": "npm run optimize-images"
+    "prebuild": "npm run optimize-images",
+    "copy-content": "node scripts/copy-content.js"
   },
   "dependencies": {
     "@react-google-maps/api": "^2.19.3",

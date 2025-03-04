@@ -14,3 +14,10 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-local-install-core"
+
+[[plugins.inputs.copy]]
+  src = "content"
+  dest = "dist/content"
