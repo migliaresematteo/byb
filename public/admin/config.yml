@@ -24,29 +24,59 @@ collections:
     folder: "content/properties"
     create: true
     slug: "{{slug}}"
+    summary: "{{title}} - {{price}}€ - {{status}}"
+    sortable_fields: ["title", "price", "status", "featured"]
+    filter:
+      field: status
+      options:
+        - For Sale
+        - For Rent
     fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Description", name: "description", widget: "text"}
-      - {label: "Price", name: "price", widget: "number"}
-      - {label: "Location", name: "location", widget: "string"}
-      - {label: "Address", name: "address", widget: "string"}
-      - {label: "Type", name: "type", widget: "select", options: ["Apartment", "House", "Villa", "Office"]}
-      - {label: "Status", name: "status", widget: "select", options: ["For Sale", "For Rent"]}
-      - {label: "Featured", name: "featured", widget: "boolean", default: false}
-      - {label: "Featured Image", name: "featuredImage", widget: "image"}
+      - {label: "Title", name: "title", widget: "string", hint: "Property title (e.g. 'Lussuosa Villa con Vista Panoramica')"}
+      - {label: "Description", name: "description", widget: "text", hint: "Brief property description (1-2 sentences)"}
+      - {label: "Price", name: "price", widget: "number", hint: "Price in Euro without currency symbol"}
+      - {label: "Location", name: "location", widget: "string", hint: "City and region (e.g. 'Torino, Piemonte')"}
+      - {label: "Address", name: "address", widget: "string", hint: "Full address"}
+      - {label: "Type", name: "type", widget: "select", options: [
+          "Apartment", 
+          "House", 
+          "Villa", 
+          "Office", 
+          "Penthouse", 
+          "Loft", 
+          "Townhouse", 
+          "Duplex", 
+          "Studio", 
+          "Land", 
+          "Commercial", 
+          "Industrial",
+          "Bilocale",
+          "Trilocale",
+          "Quadrilocale",
+          "Attico",
+          "Villetta a schiera"
+        ], hint: "Property type"}
+      - {label: "Status", name: "status", widget: "select", options: ["For Sale", "For Rent"], hint: "Property status"}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false, hint: "Show property on homepage"}
+      - {label: "Featured Image", name: "featuredImage", widget: "image", hint: "Main image for property listings"}
       - label: "Images"
         name: "images"
         widget: "list"
+        summary: "{{fields.image}}"
         field: {label: "Image", name: "image", widget: "image"}
-      - {label: "Bedrooms", name: "bedrooms", widget: "number"}
-      - {label: "Bathrooms", name: "bathrooms", widget: "number"}
-      - {label: "Square Meters", name: "squareMeters", widget: "number"}
+        hint: "Additional property images"
+      - {label: "Bedrooms", name: "bedrooms", widget: "number", hint: "Number of bedrooms"}
+      - {label: "Bathrooms", name: "bathrooms", widget: "number", hint: "Number of bathrooms"}
+      - {label: "Square Meters", name: "squareMeters", widget: "number", hint: "Property size in square meters"}
       - label: "Features"
         name: "features"
         widget: "list"
+        hint: "Property features (e.g. 'Piscina privata', 'Giardino panoramico')"
       - label: "Coordinates"
         name: "coordinates"
         widget: "object"
+        hint: "Property location coordinates for map display"
         fields:
-          - {label: "Latitude", name: "lat", widget: "number", value_type: "float", min: -90, max: 90}
-          - {label: "Longitude", name: "lng", widget: "number", value_type: "float", min: -180, max: 180}
+          - {label: "Latitude", name: "lat", widget: "number", value_type: "float", min: -90, max: 90, step: 0.0001, hint: "Latitude coordinate (e.g. 45.0703)"}
+          - {label: "Longitude", name: "lng", widget: "number", value_type: "float", min: -180, max: 180, step: 0.0001, hint: "Longitude coordinate (e.g. 7.6869)"}
+      - {label: "Body", name: "body", widget: "markdown", hint: "Detailed property description with formatting"}
