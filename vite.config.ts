@@ -8,7 +8,13 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: ['lucide-react'],
-    include: ['decap-cms-app']
+    include: [
+      'decap-cms-app',
+      'immutable',
+      'slate',
+      'slate-react',
+      'slate-hyperscript'
+    ]
   },
   // Add asset handling configuration
   assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.gif', '**/*.svg', '**/*.webp'],
@@ -24,16 +30,10 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: [
-        'slate-hyperscript',
-        'immutable',
-        'slate',
-        'slate-react'
-      ],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-          cms: ['decap-cms-app'],
+          cms: ['decap-cms-app', 'immutable', 'slate', 'slate-react', 'slate-hyperscript'],
           icons: ['lucide-react']
         }
       }
@@ -41,12 +41,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // Add path aliases if needed
       path: 'path-browserify'
     }
   },
   define: {
-    // Polyfills for Node.js modules
     'process.env': {},
     'process.platform': JSON.stringify('browser'),
     'process.version': JSON.stringify(''),
