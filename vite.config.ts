@@ -8,6 +8,7 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['decap-cms-app']
   },
   // Add asset handling configuration
   assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.gif', '**/*.svg', '**/*.webp'],
@@ -23,10 +24,16 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      external: [
+        'slate-hyperscript',
+        'immutable',
+        'slate',
+        'slate-react'
+      ],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-          // Split lucide icons into a separate chunk
+          cms: ['decap-cms-app'],
           icons: ['lucide-react']
         }
       }
@@ -34,7 +41,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // Add any path aliases if needed
+      // Add path aliases if needed
+      path: 'path-browserify'
     }
+  },
+  define: {
+    // Polyfills for Node.js modules
+    'process.env': {},
+    'process.platform': JSON.stringify('browser'),
+    'process.version': JSON.stringify(''),
   }
 });
