@@ -1,0 +1,51 @@
+backend:
+  name: git-gateway
+  branch: main
+  api_root: https://api.netlify.com
+  auth_endpoint: auth
+  commit_messages:
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+
+site_url: https://brickbybrickimmobiliare.it
+display_url: https://brickbybrickimmobiliare.it
+
+publish_mode: editorial_workflow
+
+media_folder: "public/images/properties"
+public_folder: "/images/properties"
+
+collections:
+  - name: "properties"
+    label: "Properties"
+    folder: "content/properties"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Price", name: "price", widget: "number"}
+      - {label: "Location", name: "location", widget: "string"}
+      - {label: "Address", name: "address", widget: "string"}
+      - {label: "Type", name: "type", widget: "select", options: ["Apartment", "House", "Villa", "Office"]}
+      - {label: "Status", name: "status", widget: "select", options: ["For Sale", "For Rent"]}
+      - {label: "Featured Image", name: "featuredImage", widget: "image"}
+      - label: "Images"
+        name: "images"
+        widget: "list"
+        field: {label: "Image", name: "image", widget: "image"}
+      - {label: "Bedrooms", name: "bedrooms", widget: "number"}
+      - {label: "Bathrooms", name: "bathrooms", widget: "number"}
+      - {label: "Square Meters", name: "squareMeters", widget: "number"}
+      - label: "Features"
+        name: "features"
+        widget: "list"
+      - label: "Coordinates"
+        name: "coordinates"
+        widget: "object"
+        fields:
+          - {label: "Latitude", name: "lat", widget: "number", value_type: "float", min: -90, max: 90}
+          - {label: "Longitude", name: "lng", widget: "number", value_type: "float", min: -180, max: 180}
