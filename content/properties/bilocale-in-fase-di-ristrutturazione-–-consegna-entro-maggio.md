@@ -19,7 +19,7 @@ description: In vendita un bilocale attualmente in fase di ristrutturazione,
   inclusi. Ottimo anche come investimento per avere una rendita mensile sicura.
   Per maggiori informazioni o per fissare un appuntamento, non esitare a
   contattarci.
-price: 84998
+price: 85000
 location: Torino, Piemonte
 address: Via Saorgio, 27
 type: Apartment
