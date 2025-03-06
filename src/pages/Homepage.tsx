@@ -33,7 +33,7 @@ export default function Homepage() {
       <div className="pt-24 pb-12 bg-white flex justify-center items-center min-h-[60vh]">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-lime-500 mx-auto mb-4" />
-          <p className="text-lg font-medium text-gray-700">Caricamento proprietà in corso...</p>
+          <p className="text-lg font-medium text-gray-700">Caricamento in corso...</p>
         </div>
       </div>
     );
@@ -119,7 +119,7 @@ export default function Homepage() {
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Valore Totale Portfolio</h3>
                 <p className="text-4xl font-bold text-lime-500">
-                  {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(properties.reduce((total, prop) => total + (Number(prop.price) || 0), 0) / 10)}
+                  {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(properties.reduce((total, prop) => total + (Number(prop.price) || 0), 0))}
                 </p>
               </div>
               <div className="text-center">
