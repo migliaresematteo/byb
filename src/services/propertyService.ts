@@ -14,16 +14,20 @@ export async function fetchProperties(): Promise<Property[]> {
       return staticProperties;
     }
 
-    // If CMS is available, try to fetch properties
+    // If CMS is available, try to fetch properties directly from GitHub
     try {
-      const dirResponse = await fetch('/content/properties');
-      if (dirResponse.ok) {
-        const files = await dirResponse.json();
+      // Fetch the list of properties from the GitHub API
+      const githubApiUrl = 'https://api.github.com/repos/migliaresematteo/byb/contents/content/properties';
+      const githubResponse = await fetch(githubApiUrl);
+      
+      if (githubResponse.ok) {
+        const files = await githubResponse.json();
         const markdownFiles = files.filter((file: any) => file.name.endsWith('.md') && file.name !== '.gitkeep');
         
         const propertyPromises = markdownFiles.map(async (file: any) => {
           try {
-            const contentResponse = await fetch(`/content/properties/${file.name}`);
+            // Use the raw content URL from GitHub
+            const contentResponse = await fetch(file.download_url);
             if (!contentResponse.ok) return null;
             
             const content = await contentResponse.text();
@@ -39,9 +43,24 @@ export async function fetchProperties(): Promise<Property[]> {
         if (properties.length > 0) {
           return properties;
         }
+      } else {
+        console.warn('GitHub API request failed, falling back to local content');
       }
     } catch (error) {
-      console.warn('Could not fetch markdown files:', error);
+      console.warn('Could not fetch markdown files from GitHub:', error);
+    }
+
+    // Try to fetch from local content directory as fallback
+    try {
+      const localFiles = await fetch('/api/properties');
+      if (localFiles.ok) {
+        const properties = await localFiles.json();
+        if (properties.length > 0) {
+          return properties;
+        }
+      }
+    } catch (error) {
+      console.warn('Could not fetch from local API:', error);
     }
 
     // If no CMS properties found, fall back to static data
@@ -72,23 +91,36 @@ function parseFrontmatter(frontmatter: string): any {
   const lines = frontmatter.split('\n');
   let currentKey = '';
   let isArray = false;
+  let isNestedObject = false;
+  let nestedObjectKey = '';
 
   lines.forEach(line => {
     const keyMatch = line.match(/^([^:]+):\s*(.*)$/);
     const arrayItemMatch = line.match(/^\s*-\s*(.+)$/);
+    const nestedKeyMatch = line.match(/^\s\s([^:]+):\s*(.*)$/);
 
     if (keyMatch) {
       const [, key, value] = keyMatch;
       currentKey = key.trim();
       if (!value.trim()) {
         isArray = true;
+        isNestedObject = false;
         data[currentKey] = [];
+      } else if (value.trim() === '{') {
+        isArray = false;
+        isNestedObject = true;
+        data[currentKey] = {};
       } else {
         isArray = false;
+        isNestedObject = false;
         data[currentKey] = parseValue(value.trim());
       }
     } else if (arrayItemMatch && isArray) {
       data[currentKey].push(arrayItemMatch[1].trim());
+    } else if (nestedKeyMatch && isNestedObject) {
+      const [, nestedKey, nestedValue] = nestedKeyMatch;
+      nestedObjectKey = nestedKey.trim();
+      data[currentKey][nestedObjectKey] = parseValue(nestedValue.trim());
     }
   });
 
@@ -147,12 +179,35 @@ function mapPropertyData(item: any): Property {
  */
 export async function fetchPropertyById(id: string): Promise<Property | undefined> {
   try {
-    // Try to fetch from CMS
-    const response = await fetch(`/content/properties/${id}.md`);
-    if (response.ok) {
-      const content = await response.text();
-      const property = parseMarkdownProperty(content, `${id}.md`);
-      if (property) return property;
+    // Try to fetch from GitHub first
+    try {
+      const githubApiUrl = `https://api.github.com/repos/migliaresematteo/byb/contents/content/properties/${id}.md`;
+      const githubResponse = await fetch(githubApiUrl);
+      
+      if (githubResponse.ok) {
+        const fileInfo = await githubResponse.json();
+        const contentResponse = await fetch(fileInfo.download_url);
+        
+        if (contentResponse.ok) {
+          const content = await contentResponse.text();
+          const property = parseMarkdownProperty(content, `${id}.md`);
+          if (property) return property;
+        }
+      }
+    } catch (error) {
+      console.warn(`Could not fetch property ${id} from GitHub:`, error);
+    }
+    
+    // Try to fetch from local content as fallback
+    try {
+      const response = await fetch(`/content/properties/${id}.md`);
+      if (response.ok) {
+        const content = await response.text();
+        const property = parseMarkdownProperty(content, `${id}.md`);
+        if (property) return property;
+      }
+    } catch (error) {
+      console.warn(`Could not fetch property ${id} from local content:`, error);
     }
   } catch (error) {
     console.warn(`Could not fetch property ${id} from CMS:`, error);
