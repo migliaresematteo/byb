@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrickByBrick Immobiliare</title>
+  <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <script>
+    // Check if user is logged in via Netlify Identity
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on('init', user => {
+        if (user) {
+          // If user is already logged in and on the homepage, redirect to admin
+          if (window.location.pathname === '/') {
+            window.location.href = '/admin/';
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
