@@ -1,8 +1,7 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: migliaresematteo/byb
   branch: master
-  api_root: https://api.netlify.com
-  auth_endpoint: auth
   commit_messages:
     create: 'Create {{collection}} "{{slug}}"'
     update: 'Update {{collection}} "{{slug}}"'
@@ -67,6 +66,7 @@ collections:
         summary: "{{fields.image}}"
         field: {label: "Image", name: "image", widget: "image"}
         hint: "Additional property images"
+        required: false
       - {label: "Bedrooms", name: "bedrooms", widget: "number", hint: "Number of bedrooms"}
       - {label: "Bathrooms", name: "bathrooms", widget: "number", hint: "Number of bathrooms"}
       - {label: "Square Meters", name: "squareMeters", widget: "number", hint: "Property size in square meters"}
@@ -74,6 +74,7 @@ collections:
         name: "features"
         widget: "list"
         hint: "Property features (e.g. 'Piscina privata', 'Giardino panoramico')"
+        required: false
       - label: "Coordinates"
         name: "coordinates"
         widget: "object"

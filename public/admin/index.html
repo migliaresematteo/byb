@@ -28,13 +28,9 @@
               CMS.init();
             }
           });
-        }
-
-        // Local development settings
-        if (window.location.hostname === 'localhost') {
-          window.CMS_CONFIG = {
-            local_backend: true
-          };
+        } else {
+          // No identity widget, just initialize CMS
+          CMS.init();
         }
       });
     </script>
