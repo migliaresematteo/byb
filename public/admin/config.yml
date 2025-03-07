@@ -1,12 +1,16 @@
 backend:
   name: git-gateway
   branch: master
+  identity_url: "https://brickbybrickimmobiliare.it/.netlify/identity"
+  gateway_url: "https://brickbybrickimmobiliare.it/.netlify/git/github"
   commit_messages:
     create: 'Create {{collection}} "{{slug}}"'
     update: 'Update {{collection}} "{{slug}}"'
     delete: 'Delete {{collection}} "{{slug}}"'
     uploadMedia: 'Upload "{{path}}"'
     deleteMedia: 'Delete "{{path}}"'
+
+local_backend: true
 
 site_url: https://brickbybrickimmobiliare.it
 display_url: https://brickbybrickimmobiliare.it
