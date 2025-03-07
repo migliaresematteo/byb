@@ -1,6 +1,5 @@
 backend:
-  name: github
-  repo: migliaresematteo/byb
+  name: git-gateway
   branch: master
   commit_messages:
     create: 'Create {{collection}} "{{slug}}"'

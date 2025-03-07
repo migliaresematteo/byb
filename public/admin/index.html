@@ -13,25 +13,41 @@
 
     <!-- Load Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.1.3/dist/decap-cms.js"></script>
+    <!-- Load our custom CMS preview script -->
+    <script src="./cms-preview.js"></script>
     <script>
       // Wait for both CMS and Identity Widget to be ready
       window.addEventListener('load', function() {
+        // Initialize CMS with custom config
+        CMS.init({
+          config: {
+            load_config_file: true,
+            // This helps the CMS display existing entries better
+            display_url: window.location.origin,
+            // This enables the CMS to work with the local filesystem
+            local_backend: {
+              url: window.location.origin
+            }
+          }
+        });
+        
+        // Handle identity widget if available
         if (window.netlifyIdentity) {
           window.netlifyIdentity.on('init', user => {
             if (!user) {
               window.netlifyIdentity.on('login', () => {
-                // Initialize CMS after successful login
-                CMS.init();
+                // Reload after login to refresh content
+                window.location.reload();
               });
-            } else {
-              // User is already logged in, initialize CMS
-              CMS.init();
             }
           });
-        } else {
-          // No identity widget, just initialize CMS
-          CMS.init();
         }
+        
+        // Add event listener for when properties are loaded
+        window.addEventListener('cms:properties:loaded', function(event) {
+          console.log('CMS received properties:', event.detail);
+          // You could do something with the properties here if needed
+        });
       });
     </script>
   </body>
