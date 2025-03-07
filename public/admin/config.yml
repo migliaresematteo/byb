@@ -23,6 +23,8 @@ collections:
     label: "Properties"
     folder: "content/properties"
     create: true
+    extension: "md"
+    format: "frontmatter"
     slug: "{{slug}}"
     summary: "{{title}} - {{price}}€ - {{status}}"
     sortable_fields: ["title", "price", "status", "featured"]
