@@ -2,17 +2,46 @@
 // It runs on the client side to enhance the CMS experience
 
 (function() {
+  // Function to safely add elements to the DOM
+  function safelyAppendElement(parent, element) {
+    try {
+      if (parent && element) {
+        parent.appendChild(element);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error appending element:', error);
+      return false;
+    }
+  }
+
+  // Function to safely remove elements from the DOM
+  function safelyRemoveElement(element) {
+    try {
+      if (element && element.parentNode) {
+        element.parentNode.removeChild(element);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error removing element:', error);
+      return false;
+    }
+  }
+
   // Function to load properties from the filesystem and display them in the CMS
   async function loadPropertiesInCMS() {
     try {
       // Fetch properties using our improved propertyService
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/properties.json');
       if (!response.ok) {
         console.warn('Failed to load properties for CMS preview');
         return;
       }
 
-      const properties = await response.json();
+      const data = await response.json();
+      const properties = data.properties || [];
       console.log('Loaded properties for CMS:', properties);
       
       // Store properties in localStorage for CMS to access
@@ -27,13 +56,10 @@
   }
 
   // Wait for CMS to initialize
-  window.addEventListener('load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     // Check if we're in the CMS admin interface
     if (window.location.pathname.includes('/admin')) {
       console.log('CMS Admin interface detected, loading properties...');
-      
-      // Load properties after a short delay to ensure CMS is ready
-      setTimeout(loadPropertiesInCMS, 1000);
       
       // Add custom styling for better CMS experience
       const style = document.createElement('style');
@@ -49,7 +75,25 @@
           color: #2f6f44;
         }
       `;
-      document.head.appendChild(style);
+      safelyAppendElement(document.head, style);
+      
+      // Wait for Netlify Identity to initialize before loading properties
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', user => {
+          if (user) {
+            // Load properties after a short delay to ensure CMS is ready
+            setTimeout(loadPropertiesInCMS, 1000);
+          }
+        });
+        
+        // Also load properties on login
+        window.netlifyIdentity.on('login', () => {
+          setTimeout(loadPropertiesInCMS, 1000);
+        });
+      } else {
+        // If Netlify Identity is not available, still try to load properties
+        setTimeout(loadPropertiesInCMS, 1000);
+      }
     }
   });
 })();
