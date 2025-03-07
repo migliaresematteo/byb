@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import yaml from 'js-yaml';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,11 +16,22 @@ if (!fs.existsSync(propertiesDir)) {
 
 // Convert each property to a markdown file
 propertiesJson.forEach(property => {
-  const frontmatter = yaml.dump(property);
-  const content = `---\n${frontmatter}---\n\n${property.description}\n`;
-  const filename = `${property.slug}.md`;
+  // Create frontmatter
+  const { description, ...frontmatterData } = property;
+  const frontmatter = Object.entries(frontmatterData)
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return `${key}:\n${value.map(item => `  - ${item}`).join('\n')}`;
+      }
+      return `${key}: ${value}`;
+    })
+    .join('\n');
+
+  const content = `---\n${frontmatter}\n---\n\n${description || ''}\n`;
+  const filename = `${property.slug || property.id}.md`;
   fs.writeFileSync(path.join(propertiesDir, filename), content);
+  console.log(`Created ${filename}`);
 });
 
-// Delete the original index.json file
-fs.unlinkSync(path.join(__dirname, '../content/properties/index.json'));
+// Keep the original index.json as backup
+console.log('Properties converted successfully!');

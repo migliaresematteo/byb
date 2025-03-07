@@ -9,189 +9,127 @@ import { properties as staticProperties } from '../data/properties';
  */
 export async function fetchProperties(): Promise<Property[]> {
   let cmsProperties: Property[] = [];
-  let localTestProperties: Property[] = [];
   
   try {
-    // Try multiple paths for CMS properties to handle different environments
-    const possiblePaths = [
-      '/content/properties/index.json',
-      './content/properties/index.json',
-      '../content/properties/index.json',
-      '/properties/index.json'
-    ];
+    // Fetch the list of markdown files from the CMS
+    const response = await fetch('/.netlify/git/github/contents/content/properties');
     
-    // Try to fetch properties from the CMS (deployed environment)
-    console.log('Attempting to fetch CMS properties...');
-    let cmsSuccess = false;
-    
-    for (const path of possiblePaths) {
-      if (cmsSuccess) break;
+    if (!response.ok) {
+      throw new Error('Failed to fetch properties list');
+    }
+
+    const files = await response.json();
+    const markdownFiles = files.filter((file: any) => file.name.endsWith('.md'));
+
+    // Fetch each property file
+    const propertyPromises = markdownFiles.map(async (file: any) => {
+      const contentResponse = await fetch(file.download_url);
+      if (!contentResponse.ok) {
+        console.warn(`Failed to fetch property: ${file.name}`);
+        return null;
+      }
+
+      const content = await contentResponse.text();
+      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
       
-      try {
-        console.log(`Trying path: ${path}`);
-        const cmsResponse = await fetch(path);
-        console.log(`Response for ${path}:`, cmsResponse.status);
-        
-        if (cmsResponse.ok) {
-          const cmsData = await cmsResponse.json();
-          console.log(`Data fetched successfully from ${path}:`, cmsData.length, 'properties');
-          
-          // Map the CMS data to our Property type
-          cmsProperties = cmsData.map((item: any) => {
-            // Extract the property ID from the file path
-            const id = item.slug || (item.path ? item.path.split('/').pop().replace('.md', '') : '') || item.id || `prop-${Math.random().toString(36).substr(2, 9)}`;
-            
-            // Log the item for debugging
-            console.log('Processing CMS property:', id);
-            
-            // Map CMS fields to our Property type
-            return {
-              id,
-              title: item.title || '',
-              price: item.price || null,
-              city: item.location ? item.location.split(',').pop()?.trim() : '',
-              address: item.address || '',
-              category: item.type || '',
-              totalRooms: item.bedrooms || null,
-              bedrooms: item.bedrooms || null,
-              bathrooms: item.bathrooms || null,
-              sqft: item.squareMeters || 0,
-              garage: 0, // Default value, update if CMS provides this
-              outdoorParking: 0, // Default value, update if CMS provides this
-              images: item.images ? item.images.map((img: any) => img.image || img) : [],
-              imageUrl: item.featuredImage || (item.images && item.images.length > 0 ? (item.images[0].image || item.images[0]) : ''),
-              description: item.description || '',
-              context: '', // Default value, update if CMS provides this
-              features: item.features || [],
-              condition: '', // Default value, update if CMS provides this
-              floorLevel: null, // Default value, update if CMS provides this
-              coordinates: {
-                lat: item.coordinates?.lat || 0,
-                lng: item.coordinates?.lng || 0
-              },
-              lastUpdate: new Date().toISOString().split('T')[0], // Use current date as fallback
-              projectType: item.status === 'For Sale' ? 'Vendita' : 'Affitto',
-              contractType: item.status || '',
-              totalUnits: null, // Default value, update if CMS provides this
-              floors: 1, // Default value, update if CMS provides this
-              floor: null, // Default value, update if CMS provides this
-              parking: '', // Default value, update if CMS provides this
-              heating: '', // Default value, update if CMS provides this
-              airConditioning: '', // Default value, update if CMS provides this
-              featured: item.featured || false // Add featured field mapping
-            };
-          });
-          
-          console.log('Successfully processed CMS properties:', cmsProperties.length);
-          cmsSuccess = true;
-          break;
-        }
-      } catch (pathError) {
-        console.warn(`Error fetching from ${path}:`, pathError);
+      if (!frontmatterMatch) {
+        console.warn(`Invalid frontmatter in property: ${file.name}`);
+        return null;
       }
-    }
-    
-    if (!cmsSuccess) {
-      console.warn('Failed to fetch CMS properties from any path');
-    }
-    
-    // Try to fetch local test properties (local development) if CMS fetch failed
-    if (cmsProperties.length === 0) {
-      console.log('Attempting to fetch local test properties...');
+
+      const [, frontmatter, description] = frontmatterMatch;
+      const item = parseFrontmatter(frontmatter);
       
-      // Try the same paths for local properties
-      for (const path of possiblePaths) {
-        try {
-          console.log(`Trying local path: ${path}`);
-          const localResponse = await fetch(path);
-          console.log(`Local response for ${path}:`, localResponse.status);
-          
-          if (localResponse.ok) {
-            const localData = await localResponse.json();
-            console.log(`Local data fetched successfully from ${path}:`, localData.length, 'properties');
-            
-            // Map the local test data to our Property type (same mapping as CMS)
-            localTestProperties = localData.map((item: any) => {
-              const id = item.slug || (item.path ? item.path.split('/').pop().replace('.md', '') : '') || item.id || `prop-${Math.random().toString(36).substr(2, 9)}`;
-              
-              console.log('Processing local property:', id);
-              
-              return {
-                id,
-                title: item.title || '',
-                price: item.price || null,
-                city: item.location ? item.location.split(',').pop()?.trim() : '',
-                address: item.address || '',
-                category: item.type || '',
-                totalRooms: item.bedrooms || null,
-                bedrooms: item.bedrooms || null,
-                bathrooms: item.bathrooms || null,
-                sqft: item.squareMeters || 0,
-                garage: 0,
-                outdoorParking: 0,
-                images: item.images ? item.images.map((img: any) => img.image || img) : [],
-                imageUrl: item.featuredImage || (item.images && item.images.length > 0 ? (item.images[0].image || item.images[0]) : ''),
-                description: item.description || '',
-                context: '',
-                features: item.features || [],
-                condition: '',
-                floorLevel: null,
-                coordinates: {
-                  lat: item.coordinates?.lat || 0,
-                  lng: item.coordinates?.lng || 0
-                },
-                lastUpdate: new Date().toISOString().split('T')[0],
-                projectType: item.status === 'For Sale' ? 'Vendita' : 'Affitto',
-                contractType: item.status || '',
-                totalUnits: null,
-                floors: 1,
-                floor: null,
-                parking: '',
-                heating: '',
-                airConditioning: '',
-                featured: item.featured || false
-              };
-            });
-            
-            console.log('Successfully processed local test properties:', localTestProperties.length);
-            break;
-          }
-        } catch (localPathError) {
-          console.warn(`Error fetching local properties from ${path}:`, localPathError);
-        }
-      }
-    }
-    
-    // Combine properties from both sources, avoiding duplicates by ID
-    const allProperties = [...cmsProperties];
-    
-    // Add local test properties that don't exist in CMS properties
-    localTestProperties.forEach(localProp => {
-      if (!allProperties.some(prop => prop.id === localProp.id)) {
-        allProperties.push(localProp);
-      }
+      // Extract the property ID from the file name
+      const id = file.name.replace('.md', '');
+      
+      return {
+        id,
+        title: item.title || '',
+        price: item.price || null,
+        city: item.location ? item.location.split(',').pop()?.trim() : '',
+        address: item.address || '',
+        category: item.type || '',
+        totalRooms: item.bedrooms || null,
+        bedrooms: item.bedrooms || null,
+        bathrooms: item.bathrooms || null,
+        sqft: item.squareMeters || 0,
+        garage: item.garage || 0,
+        outdoorParking: item.outdoorParking || 0,
+        images: item.images ? item.images.map((img: any) => img.image || img) : [],
+        imageUrl: item.featuredImage || (item.images && item.images.length > 0 ? (item.images[0].image || item.images[0]) : ''),
+        description: description.trim() || item.description || '',
+        context: item.context || '',
+        features: item.features || [],
+        condition: item.condition || '',
+        floorLevel: item.floorLevel || null,
+        coordinates: {
+          lat: item.coordinates?.lat || 0,
+          lng: item.coordinates?.lng || 0
+        },
+        lastUpdate: item.lastUpdate || new Date().toISOString().split('T')[0],
+        projectType: item.status === 'For Sale' ? 'Vendita' : 'Affitto',
+        contractType: item.status || '',
+        totalUnits: item.totalUnits || null,
+        floors: item.floors || 1,
+        floor: item.floor || null,
+        parking: item.parking || '',
+        heating: item.heating || '',
+        airConditioning: item.airConditioning || '',
+        featured: item.featured || false
+      };
     });
+
+    // Wait for all properties to be fetched and filter out any failed ones
+    const properties = (await Promise.all(propertyPromises)).filter((p): p is Property => p !== null);
     
-    console.log('Combined properties count:', allProperties.length);
-    
-    // If we have properties from either source, return them
-    if (allProperties.length > 0) {
-      console.log('Returning combined properties');
-      return allProperties;
+    if (properties.length > 0) {
+      return properties;
     }
-    
-    // If we couldn't get properties from either source, fall back to static data
-    console.warn('No properties found from CMS or local test files. Falling back to static data.');
-    console.log('Static properties count:', staticProperties.length);
+
+    // Fallback to static data if no properties were found
+    console.warn('No properties found. Falling back to static data.');
     return staticProperties;
     
   } catch (error) {
     console.error('Error in fetchProperties:', error);
-    
-    // Fallback to static data if all fetches fail
-    console.warn('Falling back to static property data due to error');
-    console.log('Static properties count:', staticProperties.length);
     return staticProperties;
+  }
+}
+
+function parseFrontmatter(frontmatter: string): any {
+  try {
+    // Simple YAML-like parser for frontmatter
+    const lines = frontmatter.split('\n');
+    const data: any = {};
+    
+    lines.forEach(line => {
+      const match = line.match(/^([^:]+):\s*(.+)$/);
+      if (match) {
+        const [, key, value] = match;
+        // Handle arrays
+        if (value.startsWith('[') && value.endsWith(']')) {
+          data[key] = value.slice(1, -1).split(',').map(v => v.trim());
+        }
+        // Handle numbers
+        else if (!isNaN(Number(value))) {
+          data[key] = Number(value);
+        }
+        // Handle booleans
+        else if (value === 'true' || value === 'false') {
+          data[key] = value === 'true';
+        }
+        // Handle everything else as strings
+        else {
+          data[key] = value;
+        }
+      }
+    });
+    
+    return data;
+  } catch (error) {
+    console.error('Error parsing frontmatter:', error);
+    return {};
   }
 }
 
@@ -201,9 +139,61 @@ export async function fetchProperties(): Promise<Property[]> {
  * @returns Promise<Property | undefined> - A promise that resolves to a property or undefined
  */
 export async function fetchPropertyById(id: string): Promise<Property | undefined> {
-  console.log('Fetching property by ID:', id);
-  const properties = await fetchProperties();
-  const property = properties.find(property => property.id === id);
-  console.log('Found property:', property ? 'Yes' : 'No');
-  return property;
+  try {
+    const response = await fetch(`/.netlify/git/github/contents/content/properties/${id}.md`);
+    
+    if (!response.ok) {
+      throw new Error('Property not found');
+    }
+
+    const content = await response.text();
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    
+    if (!frontmatterMatch) {
+      throw new Error('Invalid frontmatter');
+    }
+
+    const [, frontmatter, description] = frontmatterMatch;
+    const item = parseFrontmatter(frontmatter);
+    
+    return {
+      id,
+      title: item.title || '',
+      price: item.price || null,
+      city: item.location ? item.location.split(',').pop()?.trim() : '',
+      address: item.address || '',
+      category: item.type || '',
+      totalRooms: item.bedrooms || null,
+      bedrooms: item.bedrooms || null,
+      bathrooms: item.bathrooms || null,
+      sqft: item.squareMeters || 0,
+      garage: item.garage || 0,
+      outdoorParking: item.outdoorParking || 0,
+      images: item.images ? item.images.map((img: any) => img.image || img) : [],
+      imageUrl: item.featuredImage || (item.images && item.images.length > 0 ? (item.images[0].image || item.images[0]) : ''),
+      description: description.trim() || item.description || '',
+      context: item.context || '',
+      features: item.features || [],
+      condition: item.condition || '',
+      floorLevel: item.floorLevel || null,
+      coordinates: {
+        lat: item.coordinates?.lat || 0,
+        lng: item.coordinates?.lng || 0
+      },
+      lastUpdate: item.lastUpdate || new Date().toISOString().split('T')[0],
+      projectType: item.status === 'For Sale' ? 'Vendita' : 'Affitto',
+      contractType: item.status || '',
+      totalUnits: item.totalUnits || null,
+      floors: item.floors || 1,
+      floor: item.floor || null,
+      parking: item.parking || '',
+      heating: item.heating || '',
+      airConditioning: item.airConditioning || '',
+      featured: item.featured || false
+    };
+  } catch (error) {
+    console.error('Error fetching property by ID:', error);
+    // Try to find the property in static data
+    return staticProperties.find(p => p.id === id);
+  }
 }
