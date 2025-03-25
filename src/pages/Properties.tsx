@@ -27,6 +27,8 @@ export default function Proprietà() {
 
   const proprietàFiltrate = useMemo(() => {
     return properties.filter(proprietà => {
+      if (!proprietà || !proprietà.title) return false;
+      
       const corrispondeRicerca = proprietà.title.toLowerCase().includes(filtri.ricerca.toLowerCase()) ||
                                 (proprietà.city && proprietà.city.toLowerCase().includes(filtri.ricerca.toLowerCase())) ||
                                 proprietà.description.toLowerCase().includes(filtri.ricerca.toLowerCase());
@@ -34,8 +36,8 @@ export default function Proprietà() {
       const corrispondePrezzoMin = !filtri.prezzoMin || (proprietà.price && Number(proprietà.price) !== 0 && Number(proprietà.price) >= Number(filtri.prezzoMin));
       const corrispondePrezzoMax = !filtri.prezzoMax || (proprietà.price && Number(proprietà.price) !== 0 && Number(proprietà.price) <= Number(filtri.prezzoMax));
       const corrispondeStanze = !filtri.stanzeTotali || (proprietà.totalRooms && Number(proprietà.totalRooms) === Number(filtri.stanzeTotali));
-      const corrispondeMetratura = !filtri.metratura || proprietà.sqft >= Number(filtri.metratura);
-      const corrispondeCategoria = !filtri.categoria || proprietà.category.toLowerCase().includes(filtri.categoria.toLowerCase());
+      const corrispondeMetratura = !filtri.metratura || (proprietà.sqft && proprietà.sqft >= Number(filtri.metratura));
+      const corrispondeCategoria = !filtri.categoria || (proprietà.category && proprietà.category.toLowerCase().includes(filtri.categoria.toLowerCase()));
       const corrispondeCittà = !filtri.città || (proprietà.city && proprietà.city.toLowerCase() === filtri.città.toLowerCase());
 
       return corrispondeRicerca && 
@@ -56,9 +58,9 @@ export default function Proprietà() {
         case 'stanze-desc':
           return (b.totalRooms ? Number(b.totalRooms) : 0) - (a.totalRooms ? Number(a.totalRooms) : 0);
         case 'metratura-asc':
-          return a.sqft - b.sqft;
+          return (a.sqft || 0) - (b.sqft || 0);
         case 'metratura-desc':
-          return b.sqft - a.sqft;
+          return (b.sqft || 0) - (a.sqft || 0);
         default:
           return 0;
       }

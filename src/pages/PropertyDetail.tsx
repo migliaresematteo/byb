@@ -12,7 +12,7 @@ import SEO from '../components/SEO';
 import { generatePropertyMetaDescription, generatePropertyStructuredData, generatePropertyKeywords } from '../utils/seoHelpers';
 import { useProperties } from '../contexts/PropertyContext';
 import { useEffect, useState } from 'react';
-import { fetchPropertyById } from '../services/propertyService';
+import { strapiService } from '../services/strapiService';
 
 interface SchedaProprietàProps {
   property: Property;
@@ -40,7 +40,8 @@ export default function SchedaProprietàDettaglio() {
           setProperty(foundProperty);
         } else {
           // If not found in the context, fetch it individually
-          const fetchedProperty = await fetchPropertyById(id);
+          const response = await strapiService.getPropertyById(id);
+const fetchedProperty = response.data;
           if (fetchedProperty) {
             setProperty(fetchedProperty);
           } else {

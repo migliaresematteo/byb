@@ -1,0 +1,7 @@
+{
+	"dev": {
+		"jwtRolePath": "C:\\Users\\matte\\OneDrive\\Desktop\\BrickByBrick\\.netlify\\netlify-cms-oauth-provider-role.json",
+		"jwtSecret": "local-development-secret-1741076687846"
+	},
+	"siteId": "389ac452-2024-43c9-a189-bd966e510b97"
+}

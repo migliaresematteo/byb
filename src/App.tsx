@@ -9,7 +9,6 @@ import About from './pages/About';
 import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 import { PropertyProvider } from './contexts/PropertyContext';
-import { PropertyDebugInfo } from './components/PropertyDebugInfo';
 
 const routerFutureConfig = {
   v7_startTransition: true,
@@ -33,8 +32,6 @@ function App() {
             </Routes>
           </main>
           <Footer />
-          {/* Debug component - only visible in development */}
-          <PropertyDebugInfo />
         </div>
       </Router>
     </PropertyProvider>

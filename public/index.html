@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BrickByBrick Immobiliare</title>
-  <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,50 +31,14 @@
       margin-bottom: 2rem;
       color: #555;
     }
-    .button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #2f6f44;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-    .button:hover {
-      background-color: #245536;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>BrickByBrick Immobiliare</h1>
     <p>Welcome to the BrickByBrick property management system</p>
-    <a href="/admin/" class="button" id="admin-button">Access Admin Panel</a>
   </div>
 
-  <script>
-    // Check if user is logged in via Netlify Identity
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on('init', user => {
-        // We don't auto-redirect anymore, let the user click the button
-        const adminButton = document.getElementById('admin-button');
-        
-        adminButton.addEventListener('click', function(e) {
-          // If user is not logged in, open the login dialog instead of navigating
-          if (!user) {
-            e.preventDefault();
-            window.netlifyIdentity.open('login');
-            
-            // After login, redirect to admin
-            window.netlifyIdentity.on('login', () => {
-              window.location.href = '/admin/';
-            });
-          }
-          // If user is logged in, the link works normally
-        });
-      });
-    }
-  </script>
+
 </body>
 </html>

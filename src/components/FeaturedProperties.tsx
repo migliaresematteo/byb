@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
-import { Home, Square, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Property } from '../types';
 import SchedaProprietà from './PropertyCard';
+import { useProperties } from '../contexts/PropertyContext';
 
 interface FeaturedPropertiesProps {
   title?: string;
   subtitle?: string;
-  properties: Property[];
   limit?: number;
   excludeId?: string;
   showViewAll?: boolean;
@@ -16,14 +15,20 @@ interface FeaturedPropertiesProps {
 export function FeaturedProperties({ 
   title = "Proprietà in Evidenza",
   subtitle = "Scopri le nostre proprietà più esclusive",
-  properties,
   limit = 3,
   excludeId,
   showViewAll = true
 }: FeaturedPropertiesProps) {
+  const { properties, loading, error } = useProperties();
+
+  const featuredProperties = properties.filter(p => p.featured);
   const displayProperties = excludeId
-    ? properties.filter(p => p.id !== excludeId).slice(0, limit)
-    : properties.slice(0, limit);
+    ? featuredProperties.filter(p => p.id !== excludeId).slice(0, limit)
+    : featuredProperties.slice(0, limit);
+
+  if (loading || error || displayProperties.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-12 bg-white">

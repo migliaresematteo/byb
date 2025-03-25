@@ -1,43 +1,8 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
-
-[dev]
-  command = "npm run dev"
-  targetPort = 5173
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Add this section to ensure content files are copied to the build output
-[build.environment]
-  NODE_VERSION = "20"
-
-# Ensure content directory is included in the build
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
-
-[build.processing.images]
-  compress = true
-
-# Copy the content directory to the build output
-[[plugins]]
-  package = "@netlify/plugin-local-install-core"
-
-[[plugins.inputs.copy]]
-  src = "content"
-  dest = "dist/content"

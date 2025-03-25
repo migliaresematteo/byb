@@ -10,7 +10,8 @@ interface PropertyCardProps {
   showContactButtons?: boolean;
 }
 
-export default function SchedaProprietà({ property, showContactButtons = false }: PropertyCardProps) {
+
+export default function PropertyCard({ property, showContactButtons = false }: PropertyCardProps) {
   const handlePhoneClick = (e: React.MouseEvent) => {
     e.preventDefault();
     window.location.href = `tel:+390000000000`;

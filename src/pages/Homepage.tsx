@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import { Users, Award, Building, ArrowRight, Home, FileText, Handshake, Trees, Map, LucideCheckCircle, PenTool, Wrench, Phone, BadgeCheck, Network, DraftingCompass, Loader2 } from 'lucide-react';
+import { Building, ArrowRight, Home, FileText, Handshake, Trees, Map, LucideCheckCircle, PenTool, Wrench, Phone, BadgeCheck, Network, DraftingCompass, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TallyForm } from '../components/TallyForm';
-import { CMSFeaturedProperties } from '../components/CMSFeaturedProperties';
 import SEO from '../components/SEO';
 import { useProperties } from '../contexts/PropertyContext';
 
@@ -123,7 +122,7 @@ export default function Homepage() {
                 </p>
               </div>
               <div className="text-center">
-                <h2>Proprietà Disponibili</h2>
+                <h2 className='text-2xl font-bold text-gray-800 mb-2'>Proprietà Disponibili</h2>
                 <p className="text-4xl font-bold text-lime-500">
                   {properties.length}
                 </p>
@@ -201,9 +200,6 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-
-      {/* Featured Properties Section */}
-      <CMSFeaturedProperties />
 
       {/* Services Section */}
       <section className="py-20 bg-white">
